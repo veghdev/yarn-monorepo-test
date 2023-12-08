@@ -52,9 +52,8 @@ jobs:
                   echo "npmAuthToken: \"${VIZZUHQ_NPM_API}\"" > .yarnrc.yml
                   VERSION="0.9.2"
                   TAGS=("vizzu-$VERSION" "vizzu-${VERSION%.*}" "vizzu-${VERSION%%.*}")
-
                   for TAG in "${TAGS[@]}"; do
-                     echo $TAG
+                    yarn workspace ${{ inputs.workspace }} npm tag add ${{ inputs.workspace }} $TAG
                   done
               env:
                   VIZZUHQ_NPM_API: ${{ secrets.VIZZUHQ_NPM_API }}
