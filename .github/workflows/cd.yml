@@ -56,5 +56,5 @@ jobs:
                   for TAG in "${TAGS[@]}"; do
                      echo $TAG
                   done
-               env:
+              env:
                   VIZZUHQ_NPM_API: ${{ secrets.VIZZUHQ_NPM_API }}
