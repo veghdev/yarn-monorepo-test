@@ -52,7 +52,7 @@ jobs:
                   echo "npmAuthToken: \"${VIZZUHQ_NPM_API}\"" > .yarnrc.yml
                   VERSION=$(cat packages/${{ inputs.workspace }}/package.json | jq -r '.version')
                   VIZZU_VERSION="${{ inputs.vizzu }}"
-                  TAGS=("vizzu-$VIZZU_VERSION" "vizzu-${VIZZU_VERSION%.*}" "vizzu-${VIZZU_VERSION%%.*}")
+                  TAGS=("vizzu-${VIZZU_VERSION%%.*}" "vizzu-${VIZZU_VERSION%.*}" "vizzu-$VIZZU_VERSION")
                   for TAG in "${TAGS[@]}"; do
                     yarn workspace ${{ inputs.workspace }} npm tag add ${{ inputs.workspace }}@$VERSION $TAG
                   done
