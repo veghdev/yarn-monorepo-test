@@ -1,0 +1,41 @@
+name: CD
+
+on:
+    workflow_dispatch:
+        inputs:
+            workspace:
+                description: 'Yarn workspace to release'
+                required: false
+
+jobs:
+    publish:
+        runs-on: ubuntu-22.04
+
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 1
+
+            - name: Enable Corepack
+              run: |
+                  corepack enable
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: '18'
+                  cache: 'yarn'
+                  cache-dependency-path: 'yarn.lock'
+
+            - name: Init dev environment
+              run: |
+                  yarn --immutable
+
+            - name: Release package
+              if: ${{ inputs.workspace }}
+              run: |
+                  echo "npmAuthToken: \"${VIZZUHQ_NPM_API}\"" > .yarnrc.yml
+                  yarn workspace ${{ inputs.workspace }} npm publish --access public
+              env:
+                  VIZZUHQ_NPM_API: ${{ secrets.VIZZUHQ_NPM_API }}
