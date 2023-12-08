@@ -3,9 +3,16 @@ name: CD
 on:
     workflow_dispatch:
         inputs:
+            vizzu:
+                description: 'Vizzu version to tag'
+                required: true
             workspace:
-                description: 'Yarn workspace to release'
-                required: false
+                description: 'Yarn workspace to use'
+                required: true
+            release_workspace:
+                description: 'True to print to STDOUT'
+                default: false
+                type: boolean
 
 jobs:
     publish:
@@ -33,9 +40,21 @@ jobs:
                   yarn --immutable
 
             - name: Release package
-              if: ${{ inputs.workspace }}
+              if: ${{ inputs.release_workspace }}
               run: |
                   echo "npmAuthToken: \"${VIZZUHQ_NPM_API}\"" > .yarnrc.yml
-                  yarn workspace ${{ inputs.workspace }} npm publish --access public
+                  yarn workspace ${{ inputs.workspace }} npm publish
               env:
+                  VIZZUHQ_NPM_API: ${{ secrets.VIZZUHQ_NPM_API }}
+
+            - name: Tag package
+              run: |
+                  echo "npmAuthToken: \"${VIZZUHQ_NPM_API}\"" > .yarnrc.yml
+                  VERSION="0.9.2"
+                  TAGS=("vizzu-$VERSION" "vizzu-${VERSION%.*}" "vizzu-${VERSION%%.*}")
+
+                  for TAG in "${TAGS[@]}"; do
+                     echo $TAG
+                  done
+               env:
                   VIZZUHQ_NPM_API: ${{ secrets.VIZZUHQ_NPM_API }}
